@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
+import 'login_screen.dart';
 
 class FacebookHomeScreen extends StatelessWidget {
   const FacebookHomeScreen({super.key});
@@ -45,10 +48,34 @@ class FacebookHomeScreen extends StatelessWidget {
                         color: Colors.black87,
                         onPressed: () {},
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.settings_outlined, size: 28),
-                        color: Colors.black87,
-                        onPressed: () {},
+                      PopupMenuButton<String>(
+                        icon: const Icon(Icons.settings_outlined, size: 28, color: Colors.black87),
+                        onSelected: (value) async {
+                          if (value == 'signout') {
+                            final AuthController authController = Get.find<AuthController>();
+                            await authController.signOut();
+                            if (Get.context != null) {
+                              Navigator.of(Get.context!).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            }
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          PopupMenuItem<String>(
+                            value: 'signout',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.logout, color: Colors.red),
+                                const SizedBox(width: 8),
+                                const Text('Sign Out'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -535,4 +562,6 @@ class _PostInteractionButton extends StatelessWidget {
     );
   }
 }
+
+
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:get/get.dart';
 import 'login_screen.dart';
+import 'home_screen.dart';
+import '../controllers/auth_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,14 +16,30 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to login screen after 2 seconds
-    Timer(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
-    });
+    _checkAuthAndNavigate();
+  }
+
+  void _checkAuthAndNavigate() async {
+    final AuthController authController = Get.find<AuthController>();
+    
+    // Wait a bit for the splash screen to be visible
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (mounted) {
+      if (authController.isSignedIn) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const FacebookHomeScreen(),
+          ),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -67,4 +86,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+
 
